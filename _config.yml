@@ -1,0 +1,10 @@
+title: Windows Security Audit
+description: Operational guide for read-only Windows and Active Directory auditing
+lang: en-US
+theme: jekyll-theme-cayman
+show_downloads: false
+
+exclude:
+
+plugins:
+  - jekyll-seo-tag

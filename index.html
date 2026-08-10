@@ -1,0 +1,221 @@
+---
+layout: default
+title: Windows Security Audit
+description: Operational guide for read-only Windows and Active Directory auditing
+---
+
+<p class="lead">
+  Windows Security Audit collects technical information for reviewing Windows configuration, network
+  settings, administrator membership, and password policies. It operates in read-only mode and does not
+  modify accounts, services, firewall rules, or Active Directory. It does not collect passwords, hashes,
+  authentication tokens, or private keys.
+</p>
+
+<section class="download-panel" aria-labelledby="download-title">
+  <div>
+    <h2 id="download-title">Download the audit collector</h2>
+    <p>Standalone Python source for Windows 10, Windows 11, and supported Windows Server versions.</p>
+  </div>
+  <a class="download-button" id="download-script" href="{{ '/windows_security_audit.py' | relative_url }}" data-raw-source="https://raw.githubusercontent.com/michele-tn/windows-security-audit-tool/main/windows_security_audit.py" download="windows_security_audit.py">
+    Download windows_security_audit.py
+  </a>
+</section>
+
+<section class="hero-grid" aria-label="Key features">
+  <article class="info-card"><strong>Local audit</strong>Inventory of the host and relevant Windows configuration.</article>
+  <article class="info-card"><strong>Dual report</strong>Structured JSON output and an interactive HTML5 dashboard.</article>
+  <article class="info-card"><strong>Privacy by design</strong>No credentials or authentication secrets are collected.</article>
+</section>
+
+<h2 id="overview">Overview</h2>
+
+<p>
+  The collector creates a technical snapshot at execution time. The generated HTML5 report is standalone,
+  works offline, and provides search, filters, collapsible sections, readable tables, and copy controls for
+  long technical values. No audit information is transmitted to external services.
+</p>
+
+<section class="feature-grid" aria-label="Audit coverage">
+  <article class="feature-card"><strong>Networking</strong>Adapters, IP addresses, DNS servers, gateways, routes, and listening TCP ports.</article>
+  <article class="feature-card"><strong>Firewall</strong>Status and behavior of Domain, Private, and Public profiles.</article>
+  <article class="feature-card"><strong>Local identities</strong>Users, administrators, and non-secret password metadata.</article>
+  <article class="feature-card"><strong>Active Directory</strong>Domain administrators and policies when RSAT is available.</article>
+</section>
+
+<aside class="callout security" aria-label="Confidentiality notice">
+  <strong>Security boundary.</strong> Generated reports contain administrative metadata and may disclose
+  internal hostnames, addresses, account names, group membership, and security configuration. Store reports
+  securely and never commit them to a public repository.
+</aside>
+
+<h2 id="requirements">Requirements</h2>
+
+<div class="table-wrapper">
+  <table>
+    <thead><tr><th scope="col">Component</th><th scope="col">Requirement</th></tr></thead>
+    <tbody>
+      <tr><td>Operating system</td><td>Windows 10/11 or a supported Windows Server release</td></tr>
+      <tr><td>Python</td><td>Python 3.10 or later</td></tr>
+      <tr><td>PowerShell</td><td>Windows PowerShell 5.1</td></tr>
+      <tr><td>Active Directory</td><td>Optional RSAT installation for domain sections</td></tr>
+      <tr><td>Privileges</td><td>Administrator execution is recommended for complete local visibility</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h2 id="quick-start">Quick start</h2>
+
+<section class="steps" aria-label="Execution workflow">
+  <article class="step-card"><strong>Prepare</strong><br>Place the collector in a local directory restricted to authorized administrators.</article>
+  <article class="step-card"><strong>Run</strong><br>Open PowerShell with the required privileges and execute the collector.</article>
+  <article class="step-card"><strong>Review</strong><br>Open the HTML dashboard and retain the JSON only when operationally required.</article>
+</section>
+
+<pre><code class="language-powershell">Set-Location "C:\ProgramData\SecurityAudit"
+python .\windows_security_audit.py</code></pre>
+
+<p>The collector creates two timestamped files in the current directory:</p>
+
+<pre><code>windows_security_audit_YYYYMMDD_HHMMSS.json
+windows_security_audit_YYYYMMDD_HHMMSS.html</code></pre>
+
+<h3 id="custom-output">Custom output paths</h3>
+
+<pre><code class="language-powershell">python .\windows_security_audit.py `
+  --output "C:\AuditReports\audit.json" `
+  --html-output "C:\AuditReports\audit.html"</code></pre>
+
+<p>All paths shown in this guide are generic examples and do not identify a real environment.</p>
+
+<h2 id="dashboard">Using the HTML5 dashboard</h2>
+
+<ul class="checklist">
+  <li>Use the navigation index to move directly to a report section.</li>
+  <li>Search for accounts, IP addresses, SIDs, ports, or configuration values.</li>
+  <li>Filter completed sections or sections requiring attention.</li>
+  <li>Expand only the information needed for the current review.</li>
+  <li>Copy long identifiers through the associated copy control.</li>
+  <li>Print or export to PDF only when organizational policy allows it.</li>
+</ul>
+
+<h3 id="status-meaning">Status meaning</h3>
+
+<div class="table-wrapper">
+  <table>
+    <thead><tr><th scope="col">Status</th><th scope="col">Meaning</th><th scope="col">Recommended action</th></tr></thead>
+    <tbody>
+      <tr><td>Completed</td><td>The query returned valid data</td><td>Review the collected information</td></tr>
+      <tr><td>Timeout</td><td>The component did not respond within the configured limit</td><td>Check connectivity and required services</td></tr>
+      <tr><td>Error</td><td>A prerequisite or permission was unavailable</td><td>Review the section error message</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<p>
+  An Active Directory section error does not invalidate the local audit. If RSAT is unavailable or the
+  host is not domain joined, those sections report the missing prerequisite while local sections remain usable.
+</p>
+
+<h2 id="data-protection">Data protection</h2>
+
+<ul class="checklist">
+  <li>Do not add passwords, hashes, tokens, API keys, private certificates, or encryption keys.</li>
+  <li>Do not hard-code real hostnames, domains, addresses, shares, or internal URLs.</li>
+  <li>Do not add customer names, user names, service accounts, or organization-specific identifiers.</li>
+  <li>Do not commit generated JSON or HTML reports.</li>
+  <li>Do not commit logs, diagnostic dumps, executables, or environment files.</li>
+  <li>Review the complete Git history before making the repository public.</li>
+</ul>
+
+<aside class="callout warning" aria-label="Publication warning">
+  <strong>Important.</strong> The collector source may be published only after an explicit security and
+  privacy review. Generated reports must always remain outside the public repository.
+</aside>
+
+<h3 id="git-exclusions">Repository exclusions</h3>
+
+<pre><code class="language-gitignore">windows_security_audit_*.json
+windows_security_audit_*.html
+*.log
+*.pfx
+*.p12
+*.key
+*.pem
+.env
+__pycache__/</code></pre>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<details><summary>Active Directory sections report an error</summary><p>Install RSAT, confirm domain membership, and use an account with appropriate read permissions.</p></details>
+<details><summary>Some local information is unavailable</summary><p>Run the collector from an elevated PowerShell session. Do not disable security controls.</p></details>
+<details><summary>A section reports a timeout</summary><p>Check connectivity, required PowerShell modules, and domain service availability.</p></details>
+<details><summary>The HTML report does not reflect the latest collector</summary><p>Generate a new report after updating the Python file. Existing reports are static and are not updated automatically.</p></details>
+
+<p>
+  The site uses <code>jekyll-theme-cayman</code>, supported by GitHub Pages, with an additional responsive
+  and accessible presentation layer.
+</p>
+
+<h2 id="operating-principles">Operating principles</h2>
+
+<ul class="checklist">
+  <li>Least privilege</li>
+  <li>Read-only collection</li>
+  <li>No secret acquisition</li>
+  <li>Limited report retention</li>
+  <li>Need-to-know access</li>
+  <li>Human review before publication</li>
+</ul>
+
+<hr>
+
+<p>
+  This guide describes a defensive auditing workflow. It does not replace the organization's security,
+  privacy, retention, incident response, or change-management policies.
+</p>
+
+<script>
+  const downloadButton = document.querySelector("#download-script");
+  const rawScriptUrl = downloadButton.dataset.rawSource;
+  const localScriptUrl = "{{ '/windows_security_audit.py' | relative_url }}";
+
+  downloadButton.addEventListener("click", async (event) => {
+    event.preventDefault();
+    const originalLabel = downloadButton.textContent;
+    downloadButton.textContent = "Preparing download…";
+    downloadButton.setAttribute("aria-busy", "true");
+
+    try {
+      const response = await fetch(rawScriptUrl, { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const source = await response.text();
+      const objectUrl = URL.createObjectURL(
+        new Blob([source], { type: "text/x-python;charset=utf-8" })
+      );
+      const saveLink = document.createElement("a");
+      saveLink.href = objectUrl;
+      saveLink.download = "windows_security_audit.py";
+      document.body.appendChild(saveLink);
+      saveLink.click();
+      saveLink.remove();
+      URL.revokeObjectURL(objectUrl);
+      downloadButton.textContent = "Download started";
+    } catch {
+      const fallbackLink = document.createElement("a");
+      fallbackLink.href = localScriptUrl;
+      fallbackLink.download = "windows_security_audit.py";
+      document.body.appendChild(fallbackLink);
+      fallbackLink.click();
+      fallbackLink.remove();
+      downloadButton.textContent = "Download started";
+    } finally {
+      downloadButton.removeAttribute("aria-busy");
+      window.setTimeout(() => {
+        downloadButton.textContent = originalLabel;
+      }, 1800);
+    }
+  });
+</script>
