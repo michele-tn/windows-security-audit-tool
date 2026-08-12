@@ -56,7 +56,7 @@ def run_powershell(script: str, timeout_seconds: int = 45) -> dict[str, object]:
             timeout=timeout_seconds,
         )
     except subprocess.TimeoutExpired:
-        return {"status": "timeout", "error": f"Timeout dopo {timeout_seconds}s"}
+        return {"status": "timeout", "error": f"Timeout after {timeout_seconds}s"}
     except OSError as error:
         return {"status": "error", "error": str(error)}
 

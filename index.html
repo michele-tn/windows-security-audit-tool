@@ -1,30 +1,71 @@
 ---
 layout: default
 title: Windows Security Audit
-description: Operational guide for read-only Windows and Active Directory auditing
+description: Download and operational guide for the enhanced read-only Windows and Active Directory auditor
 ---
 
 <p class="lead">
-  Windows Security Audit collects technical information for reviewing Windows configuration, network
-  settings, administrator membership, and password policies. It operates in read-only mode and does not
+  Windows Security Audit 2 collects technical information for reviewing Windows configuration, network
+  settings, active sessions, privilege-escalation indicators, administrator membership, and password policies. It operates in read-only mode and does not
   modify accounts, services, firewall rules, or Active Directory. It does not collect passwords, hashes,
   authentication tokens, or private keys.
 </p>
 
 <section class="download-panel" aria-labelledby="download-title">
   <div>
-    <h2 id="download-title">Download the audit collector</h2>
-    <p>Standalone Python source for Windows 10, Windows 11, and supported Windows Server versions.</p>
+    <span class="release-label">Current version</span>
+    <h2 id="download-title">Download Windows Security Audit 2</h2>
+    <p>Enhanced standalone Python collector with 16 parallel audit modules and an interactive English report.</p>
   </div>
-  <a class="download-button" id="download-script" href="{{ '/windows_security_audit.py' | relative_url }}" data-raw-source="https://raw.githubusercontent.com/michele-tn/windows-security-audit-tool/main/windows_security_audit.py" download="windows_security_audit.py">
-    Download windows_security_audit.py
+  <a class="download-button" id="download-script" href="{{ '/windows_security_audit2.py' | relative_url }}" data-raw-source="https://raw.githubusercontent.com/michele-tn/windows-security-audit-tool/main/windows_security_audit2.py" download="windows_security_audit2.py">
+    Download windows_security_audit2.py
   </a>
 </section>
 
+<p class="source-link">
+  Prefer to inspect the source first?
+  <a href="https://github.com/michele-tn/windows-security-audit-tool/blob/main/windows_security_audit2.py">View windows_security_audit2.py on GitHub</a>.
+</p>
+
 <section class="hero-grid" aria-label="Key features">
-  <article class="info-card"><strong>Local audit</strong>Inventory of the host and relevant Windows configuration.</article>
+  <article class="info-card"><strong>Expanded coverage</strong>Sixteen parallel modules covering the host, network, identities, security controls, and AD.</article>
   <article class="info-card"><strong>Dual report</strong>Structured JSON output and an interactive HTML5 dashboard.</article>
   <article class="info-card"><strong>Privacy by design</strong>No credentials or authentication secrets are collected.</article>
+</section>
+
+<h2 id="whats-new">What is new in version 2</h2>
+
+<p>
+  Version 2 combines every check from the original collector with additional Windows and Active Directory
+  discovery. The report has also been redesigned to explain its findings instead of presenting raw command
+  output without context.
+</p>
+
+<section class="update-grid" aria-label="Version 2 improvements">
+  <article class="update-card">
+    <span class="update-number">01</span>
+    <div><strong>Complete command transparency</strong>Every report section can reveal the exact PowerShell command used to collect its output.</div>
+  </article>
+  <article class="update-card">
+    <span class="update-number">02</span>
+    <div><strong>Improved data presentation</strong>Account policy and RDP sessions are parsed into semantic tables with clear column headings.</div>
+  </article>
+  <article class="update-card">
+    <span class="update-number">03</span>
+    <div><strong>Readable AD inventory</strong>Computer objects are numbered, counted, and accompanied by an explanation of what the list does and does not prove.</div>
+  </article>
+  <article class="update-card">
+    <span class="update-number">04</span>
+    <div><strong>Resilient local-group discovery</strong>An ADSI fallback handles unresolved SIDs or LocalAccounts module failures without discarding the entire section.</div>
+  </article>
+  <article class="update-card">
+    <span class="update-number">05</span>
+    <div><strong>Additional security checks</strong>Active sessions, domain controllers, AD assets, and common local privilege-escalation indicators are included.</div>
+  </article>
+  <article class="update-card">
+    <span class="update-number">06</span>
+    <div><strong>Stable English dashboard</strong>Consistent section ordering, search, filters, responsive tables, copy controls, and English labels throughout.</div>
+  </article>
 </section>
 
 <h2 id="overview">Overview</h2>
@@ -39,7 +80,9 @@ description: Operational guide for read-only Windows and Active Directory auditi
   <article class="feature-card"><strong>Networking</strong>Adapters, IP addresses, DNS servers, gateways, routes, and listening TCP ports.</article>
   <article class="feature-card"><strong>Firewall</strong>Status and behavior of Domain, Private, and Public profiles.</article>
   <article class="feature-card"><strong>Local identities</strong>Users, administrators, and non-secret password metadata.</article>
-  <article class="feature-card"><strong>Active Directory</strong>Domain administrators and policies when RSAT is available.</article>
+  <article class="feature-card"><strong>Active Directory</strong>Domain controllers, computer inventory, administrators, password metadata, and domain policy.</article>
+  <article class="feature-card"><strong>Sessions</strong>Active console and Remote Desktop sessions presented in a structured table.</article>
+  <article class="feature-card"><strong>Privilege escalation</strong>AlwaysInstallElevated settings and potentially unsafe unquoted service paths.</article>
 </section>
 
 <aside class="callout security" aria-label="Confidentiality notice">
@@ -72,18 +115,22 @@ description: Operational guide for read-only Windows and Active Directory auditi
 </section>
 
 <pre><code class="language-powershell">Set-Location "C:\ProgramData\SecurityAudit"
-python .\windows_security_audit.py</code></pre>
+python .\windows_security_audit2.py</code></pre>
 
-<p>The collector creates two timestamped files in the current directory:</p>
+<p>By default, the collector creates two files in the current directory:</p>
 
-<pre><code>windows_security_audit_YYYYMMDD_HHMMSS.json
-windows_security_audit_YYYYMMDD_HHMMSS.html</code></pre>
+<pre><code>audit_result.json
+audit_result.html</code></pre>
 
 <h3 id="custom-output">Custom output paths</h3>
 
-<pre><code class="language-powershell">python .\windows_security_audit.py `
-  --output "C:\AuditReports\audit.json" `
-  --html-output "C:\AuditReports\audit.html"</code></pre>
+<pre><code class="language-powershell">python .\windows_security_audit2.py `
+  --output "C:\AuditReports\workstation_audit"</code></pre>
+
+<p>
+  The output argument is a base path without an extension. The example above creates
+  <code>workstation_audit.json</code> and <code>workstation_audit.html</code>.
+</p>
 
 <p>All paths shown in this guide are generic examples and do not identify a real environment.</p>
 
@@ -136,6 +183,8 @@ windows_security_audit_YYYYMMDD_HHMMSS.html</code></pre>
 
 <pre><code class="language-gitignore">windows_security_audit_*.json
 windows_security_audit_*.html
+audit_result.json
+audit_result.html
 *.log
 *.pfx
 *.p12
@@ -177,7 +226,7 @@ __pycache__/</code></pre>
 <script>
   const downloadButton = document.querySelector("#download-script");
   const rawScriptUrl = downloadButton.dataset.rawSource;
-  const localScriptUrl = "{{ '/windows_security_audit.py' | relative_url }}";
+  const localScriptUrl = "{{ '/windows_security_audit2.py' | relative_url }}";
 
   downloadButton.addEventListener("click", async (event) => {
     event.preventDefault();
@@ -197,7 +246,7 @@ __pycache__/</code></pre>
       );
       const saveLink = document.createElement("a");
       saveLink.href = objectUrl;
-      saveLink.download = "windows_security_audit.py";
+      saveLink.download = "windows_security_audit2.py";
       document.body.appendChild(saveLink);
       saveLink.click();
       saveLink.remove();
@@ -206,7 +255,7 @@ __pycache__/</code></pre>
     } catch {
       const fallbackLink = document.createElement("a");
       fallbackLink.href = localScriptUrl;
-      fallbackLink.download = "windows_security_audit.py";
+      fallbackLink.download = "windows_security_audit2.py";
       document.body.appendChild(fallbackLink);
       fallbackLink.click();
       fallbackLink.remove();

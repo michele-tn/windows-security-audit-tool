@@ -83,6 +83,7 @@ body {
 
 .hero-grid,
 .feature-grid,
+.update-grid,
 .steps {
   display: grid;
   gap: 1rem;
@@ -97,6 +98,11 @@ body {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.update-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 1.2rem 0 2rem;
+}
+
 .steps {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   counter-reset: step;
@@ -104,11 +110,40 @@ body {
 
 .info-card,
 .feature-card,
+.update-card,
 .step-card {
   padding: 1.2rem;
   background: var(--surface-soft);
   border: 1px solid var(--line);
   border-radius: 14px;
+}
+
+.update-card {
+  display: grid;
+  grid-template-columns: 2.4rem minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: start;
+  background: #fff;
+  box-shadow: 0 7px 22px rgba(23, 32, 51, 0.06);
+}
+
+.update-card strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--brand-dark);
+}
+
+.update-number {
+  display: grid;
+  width: 2.4rem;
+  height: 2.4rem;
+  color: var(--brand);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  background: #eef4ff;
+  border-radius: 9px;
+  place-items: center;
 }
 
 .info-card strong,
@@ -183,6 +218,27 @@ body {
 .download-panel p {
   margin: 0;
   color: rgba(255, 255, 255, 0.8);
+}
+
+.release-label {
+  display: inline-block;
+  margin-bottom: 0.45rem;
+  padding: 0.2rem 0.55rem;
+  color: #d1fadf;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  background: rgba(6, 118, 71, 0.42);
+  border: 1px solid rgba(171, 239, 198, 0.35);
+  border-radius: 999px;
+}
+
+.source-link {
+  margin-top: -0.8rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+  text-align: right;
 }
 
 .download-button {
@@ -270,6 +326,7 @@ a:focus-visible {
 
   .hero-grid,
   .feature-grid,
+  .update-grid,
   .steps {
     grid-template-columns: 1fr;
   }
@@ -277,6 +334,16 @@ a:focus-visible {
   .download-panel {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .download-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .source-link {
+    margin-top: 0;
+    text-align: left;
   }
 
   .main-content table {
